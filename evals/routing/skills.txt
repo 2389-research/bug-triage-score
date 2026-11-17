@@ -1,0 +1,13 @@
+- code-review: Review the current diff, or a PR number/branch/path target, for correctness bugs (plus reuse/simplification/efficiency cleanups) at a given effort level.
+- systematic-debugging: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes
+- test-driven-development: Use when implementing any feature or bugfix, before writing implementation code
+- receiving-code-review: Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable
+- requesting-code-review: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
+- security-audit: Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons.
+- sift-codebase-audit: Use when asked to audit a codebase for simplification or refactoring opportunities, review structural complexity or tech debt.
+- blog-writing: Use when asked to write, draft, or create a technical blog post, tutorial, how-to guide, or developer-focused article
+- simplify-changes: Clean up recently changed code for reuse, quality, and efficiency, then run the project's checks.
+- verification-before-completion: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs
+- implicit-state-machines: Audit a codebase for implicit state machines, rank them by bug risk, and convert chosen ones to explicit state with tests.
+- trace: Use when verifying a repository against its authoritative spec - spec-to-code audits, implementation-completeness reviews, release verification.
+- using-grove: Use when asked to build a tracker, triage desk, CRM, registry, or any tool that manages typed records with statuses.

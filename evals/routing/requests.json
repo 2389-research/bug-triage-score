@@ -1,0 +1,11 @@
+[
+  {"text": "Code review turned up seven issues in the payments module. Which ones should we fix before the release?", "expect": "bug-triage-score"},
+  {"text": "QA sent a list of 12 bugs from the regression run. Sort out what we handle now and what waits.", "expect": "bug-triage-score"},
+  {"text": "The audit found a pile of edge cases in the CSV parser. Deal with them.", "expect": "bug-triage-score"},
+  {"text": "I found a few more bugs while debugging the sync job. Are any of them worth fixing now?", "expect": "bug-triage-score"},
+  {"text": "Our tech lead wants every edge case in the importer handled before merge. Here's the list she flagged.", "expect": "bug-triage-score"},
+  {"text": "Review this PR for correctness bugs.", "expect": "code-review"},
+  {"text": "Tests are failing intermittently in CI. Find out why.", "expect": "systematic-debugging"},
+  {"text": "Write a blog post about how our team triages bugs.", "expect": "blog-writing"},
+  {"text": "Build us a small bug-tracking desk with statuses and an audit trail.", "expect": "using-grove"}
+]

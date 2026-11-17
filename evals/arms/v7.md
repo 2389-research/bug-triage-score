@@ -1,0 +1,101 @@
+---
+name: bug-triage-score
+description: Use when bugs turn up during code review, debugging, audits, QA, or testing and you must decide which to fix now and which to file as issues - including when a reviewer wants every edge case handled, when QA hands over ready-made fixes, or when a fix looks too small to bother filing.
+---
+
+# Bug triage by score
+
+Score every bug before touching code. The score decides whether it gets fixed or filed. The size of the fix never enters the score.
+
+## Scope
+
+The task's scope is the bugs the user handed you, or the code the user asked you to review. Score and act only on bugs in that scope. Don't hunt for more.
+
+If the user directly asks you to fix a specific bug, fix it without scoring it; the user already decided. "Review this and deal with what you find" or "triage these and handle them" is not a direct request.
+
+## Scoring
+
+Rate each bug on frequency (0-10) and severity (1-10), using how the code is used **today**. Read the evidence first: usage docs, README, callers, call sites, data, logs.
+
+**Frequency** - how often real use of the whole system hits it. Count how often people run into it, not how often it fires once its code path runs: a typo in rarely used help text is rare.
+
+| Rating | Meaning |
+| --- | --- |
+| 0 | Latent: no current caller or input can trigger it. Input an attacker controls counts as current input |
+| 1 | Real use can hit it, but only through an unlikely combination of conditions |
+| 2-3 | Real use hits it rarely: a few times a month or less |
+| 4-6 | Real use hits it regularly: weekly to daily |
+| 7-9 | Most runs for some users or data hit it |
+| 10 | Nearly every run hits it |
+
+**Severity** - how bad it is when it happens, rated even when frequency is 0:
+
+| Rating | Meaning |
+| --- | --- |
+| 1 | Cosmetic: wording, log text, layout |
+| 2-3 | Minor wrong output that people notice and work around, or a recoverable error |
+| 4-5 | A feature fails or gives wrong results for some users, with a workaround |
+| 6-7 | Wrong data saved or sent silently, or a feature broken with no workaround |
+| 8-9 | Data loss or corruption, or a contained security exposure |
+| 10 | Widespread data loss, an exploitable security hole, or a total outage |
+
+Each rating is **one whole number**. `score = frequency x severity`.
+
+Each rating needs a **basis**: the file, doc, log, or user statement it rests on. If you have no evidence, pick your best single estimate and write `guess` as its basis. Never write a range.
+
+## Decision
+
+Take the first row that matches:
+
+| Situation | Action |
+| --- | --- |
+| The user directly asked for this fix | `fixed (user asked)` |
+| The bug is outside the task's scope | `to file` |
+| Score 0-4 | `to file`, or `filed <link>` once filed |
+| Score 5-9 and either rating is a `guess` | Ask the user. If you can't ask now: `filed (rating unsure)` |
+| Score 5 or above, but the fix needs a new feature, a decision, or access you don't have | `blocked: <reason>` |
+| Score 5 or above | `fixed` |
+
+For `to file` and `filed` bugs, leave the code alone: no fix, no guard, no refactor, no TODO comment.
+
+**Violating the letter of the threshold is violating its spirit.** The action follows the table, not your judgment. If a score feels wrong, recheck each rating against its basis.
+
+| Rationalization | Reality |
+| --- | --- |
+| "It's a one-line fix" / "QA already wrote it" | Fix size is not in the score. File it and include the proposed fix in the issue. |
+| "Wrong money / wrong output is a real correctness problem" | Rate severity from the table, then multiply. Rare and minor is still below 5. |
+| "Even at low frequency the score clears 5" | Rate frequency from the evidence, not from the outcome you want. |
+| "No current input hits it, but the score says fix" | Then frequency is 0, not 1. Latent bugs score 0 and get filed. |
+| "Timeouts are probably routine" | If the docs say otherwise, the docs win. If nothing says, the basis is `guess`. |
+| "The reviewer will ask about edge cases" | List them in the report. Do not code for them. |
+| "It scored high, but I'd rather not touch it" | Use `blocked: <reason>` with a real reason, or fix it. |
+
+## Red flags - stop and recheck
+
+- A range, `+`, `?` or `≥` in a Freq, Sev, or Score cell
+- An action that isn't the first matching row of the Decision table
+- A code change for a bug whose action is `to file` or `filed`
+- A guard, validation, or config option that no scored bug needed
+- A frequency picked after you already knew which action you wanted
+
+## Filing an issue
+
+If the project has an issue tracker you can write to (for example `gh issue create` with a configured remote), file there. Otherwise list the issues in your report for the user to file. Each issue includes:
+
+- What the bug is and where (file and line)
+- How to trigger it
+- Frequency, severity, and score, each with its basis
+- The proposed fix, if one exists
+
+## Reporting
+
+Report every bug you scored or fixed in one table, highest score first. This includes bugs you left alone and out-of-scope bugs you noticed. Include the table even when it has one row.
+
+| Bug | Location | Freq | Sev | Score | Basis | Action |
+| --- | --- | --- | --- | --- | --- | --- |
+
+- **Freq, Sev, Score**: one whole number each. For a `fixed (user asked)` row, write `-` in all three.
+- **Basis**: one line naming the evidence for both ratings, or `guess`.
+- **Action**: the action from the Decision table.
+
+After the table, list each `to file` issue in full. Before you send the report, check every row against the red flags. If a row fails, correct the row itself; the table is the record, so don't add a correction note below it.
